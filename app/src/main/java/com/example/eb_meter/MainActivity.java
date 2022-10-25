@@ -1,8 +1,17 @@
 package com.example.eb_meter;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,11 +22,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Random;
-
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,8 +54,17 @@ public class MainActivity extends AppCompatActivity {
         //set name and account number on the screen
         TextView welcomeTxt = findViewById(R.id.welcomeTxt);
         TextView accountTxt = findViewById(R.id.accountView);
-        Button generatePDFbtn = findViewById(R.id.createPdfBtn);
-        //bmp = BitmapFactory.decodeResource(getResources(), R.drawable)
+
+        //get image header into a Bitmap variable
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pdf_header);
+        scaledbmp = Bitmap.createScaledBitmap(bmp, 140, 140, false);
+
+        //checks permission
+        if (checkPermission()) {
+            Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+        } else {
+            requestPermission();
+        }
 
         //to get the name of the user from the previous activity
         welcomeTxt.setText(getString(R.string.welcomeMsg, getIntent().getStringExtra("name")));
@@ -55,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         setCharge();
         calcTotal();
 
-//        refreshes randomly generated units and charges
+        //refreshes randomly generated units and charges
         Button refreshBtn = findViewById(R.id.refreshBtn);
         refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
                 setUnits();
                 setCharge();
                 calcTotal();
+            }
+        });
+
+        //function call to generate PDF document
+        Button createPdfBtn = findViewById(R.id.createPdfBtn);
+        createPdfBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createPdfFunc();
             }
         });
 
@@ -88,14 +118,58 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //function to generate PDF
+    private void createPdfFunc() {
+        //object variable for PDF document
+        Toast.makeText(this, "Generating PDF", Toast.LENGTH_SHORT).show();
+        PdfDocument pdfDocument = new PdfDocument();
+
+        Paint paint = new Paint();
+        Paint title = new Paint();
+
+        PdfDocument.PageInfo myPageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+        PdfDocument.Page myPage = pdfDocument.startPage(myPageInfo);
+
+        Canvas canvas = myPage.getCanvas();
+        canvas.drawBitmap(scaledbmp, 56, 40, paint);
+
+        title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        title.setTextSize(15);
+        title.setColor(ContextCompat.getColor(this, R.color.purple_200));
+
+        canvas.drawText("Smart IoT systems empowering you.", 209, 100, title);
+        canvas.drawText("ABC electricity usage meter", 209, 80, title);
+
+        title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+        title.setColor(ContextCompat.getColor(this, R.color.purple_200));
+        title.setTextSize(15);
+
+        title.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("This is sample document which we have created", 396, 560, title);
+
+        pdfDocument.finishPage(myPage);
+
+        //write the above to PDF file and save in phone memory
+        File file = new File(Environment.getExternalStorageDirectory(), "GeneratedBill.pdf");
+
+        try {
+            pdfDocument.writeTo(new FileOutputStream(file));
+            Toast.makeText(MainActivity.this, "PDF file generated successfully", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        pdfDocument.close();
+    }
+
     //function to generate random values
-    public int generateRandomValues() {
+    private int generateRandomValues() {
         Random random = new Random();
         return random.nextInt(110 - 15) + 15;
     }
 
     //function to set units
-    public void setUnits() {
+    private void setUnits() {
         //initialize Unit textview for the rooms in the table
         TextView lrUnits = findViewById(R.id.lrUnits);
         TextView drUnits = findViewById(R.id.drUnits);
@@ -122,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //function to determine charges
-    public float getCharge(int units) {
+    private float getCharge(int units) {
         float charge;
 
         if (units <= 90) {
@@ -137,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //function to set charges
-    public void setCharge() {
+    private void setCharge() {
         //initialize charges textview in the table
         TextView lrCharges = findViewById(R.id.lrCharges);
         TextView drCharges = findViewById(R.id.drCharges);
@@ -163,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //function to calculate total charges and units
-    public void calcTotal() {
+    private void calcTotal() {
         int totUnits = 0;
         float totCharges = (float) 0.00;
 
@@ -182,4 +256,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //function for checking permissions
+    private boolean checkPermission() {
+        int permission1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        int permission2 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        return permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    //function to request permission if it was not provided
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0) {
+                boolean writeStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean readStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                if (writeStorage && readStorage) {
+                    Toast.makeText(this, "Permission Granted..", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Permission Denied.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        }
+    }
 }
