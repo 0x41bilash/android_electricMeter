@@ -1,4 +1,4 @@
-# android_electricMeter
+# Smart Electricity Usage Meter
 This is a development project for a smart IoT-based electricity usage meter that runs on Android.
 
 ### Objectives
