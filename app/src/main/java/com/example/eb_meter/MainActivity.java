@@ -1,5 +1,7 @@
 package com.example.eb_meter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,10 +16,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Random;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 public class MainActivity extends AppCompatActivity {
 
     private final int[] totalUnit = new int[7];
     private final float[] totalCharge = new float[7];
+
+    //height and width for PDF file
+    int pageHeight = 1120;
+    int pageWidth = 792;
+
+    // Stores header for PDF
+    Bitmap bmp, scaledbmp;
+
+    // constant code for runtime permissions
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         //set name and account number on the screen
         TextView welcomeTxt = findViewById(R.id.welcomeTxt);
         TextView accountTxt = findViewById(R.id.accountView);
+        Button generatePDFbtn = findViewById(R.id.createPdfBtn);
+        //bmp = BitmapFactory.decodeResource(getResources(), R.drawable)
 
         //to get the name of the user from the previous activity
         welcomeTxt.setText(getString(R.string.welcomeMsg, getIntent().getStringExtra("name")));
