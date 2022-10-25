@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">EB Meter</string>
+    <string name="create_pdf">Generate PDF</string>
+    <string name="refresh">Refresh</string>
+    <string name="cebACNumber">A/C Number: %1$s</string>
+    <string name="col1">Rooms</string>
+    <string name="col2">Units consumed/kWh</string>
+    <string name="col3">Charges/Rs.</string>
+    <string name="settings">Settings</string>
+    <string name="row2">Living room</string>
+    <string name="row3">Dining room</string>
+    <string name="row4">Kitchen</string>
+    <string name="row5">Bedroom 1</string>
+    <string name="row6">Bedroom 2</string>
+    <string name="row7">Bathroom 1</string>
+    <string name="row8">Bathroom 2</string>
+    <string name="total">Total</string>
+    <string name="welcomeMsg">Welcome, %1$s!</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="imgDescription">Application login icon</string>
+    <string name="name">Name</string>
+    <string name="login">Login</string>
+    <string name="account_number">Account number</string>
+    <string name="EBSelfCare">Electricity Board SelfCare</string>
+    <string name="chargeFormat">%.2f</string>
+</resources>

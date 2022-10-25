@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/createPdfBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/create_pdf"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/refreshBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="52dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/refresh"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/welcomeTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/welcomeMsg"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/accountView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="80dp"
+        android:text="@string/cebACNumber"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:background="@color/white_smoke"
+        android:stretchColumns="1,2,3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/col1"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_column="2"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/col2"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_column="3"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/col3"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/row2"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/lrUnits"
+                android:layout_column="2"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/lrCharges"
+                android:layout_column="3"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/row3"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/drUnits"
+                android:layout_column="2"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/drCharges"
+                android:layout_column="3"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/row4"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/kitchenUnits"
+                android:layout_column="2"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/kitchenCharges"
+                android:layout_column="3"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/row5"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/br1Units"
+                android:layout_column="2"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/br1Charges"
+                android:layout_column="3"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/row6"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/br2Units"
+                android:layout_column="2"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/br2Charges"
+                android:layout_column="3"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/row7"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/bt1Units"
+                android:layout_column="2"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/bt1Charges"
+                android:layout_column="3"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/row8"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/bt2Units"
+                android:layout_column="2"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/bt2Charges"
+                android:layout_column="3"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp" />
+
+        </TableRow>
+
+        <TableRow android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/total"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/totalUnits"
+                android:layout_column="2"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/totalCharges"
+                android:layout_column="3"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+
+        </TableRow>
+
+    </TableLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
