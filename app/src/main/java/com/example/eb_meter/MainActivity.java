@@ -1,5 +1,6 @@
 package com.example.eb_meter;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 import android.content.pm.PackageManager;
@@ -11,7 +12,6 @@ import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
     private final int[] totalUnit = new int[7];
     private final float[] totalCharge = new float[7];
 
+    //height and width for PDF file
+    int pageHeight = 1120;
+    int pageWidth = 792;
+
+    // Stores header for PDF
     Bitmap bmp, scaledbmp;
 
     // constant code for runtime permissions
@@ -48,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
         //set name and account number on the screen
         TextView welcomeTxt = findViewById(R.id.welcomeTxt);
         TextView accountTxt = findViewById(R.id.accountView);
+
+        //get image header into a Bitmap variable
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pdf_header);
+        scaledbmp = Bitmap.createScaledBitmap(bmp, 140, 140, false);
 
         //checks permission
         if (checkPermission()) {
@@ -79,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
 
         //function call to generate PDF document
         Button createPdfBtn = findViewById(R.id.createPdfBtn);
-        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pdf_header);
-        scaledbmp = Bitmap.createScaledBitmap(bmp, 1050, 369, false);
         createPdfBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,52 +119,45 @@ public class MainActivity extends AppCompatActivity {
 
     //function to generate PDF
     private void createPdfFunc() {
-        // creating an object variable for our PDF document.
+        //object variable for PDF document
+        Toast.makeText(this, "Generating PDF", Toast.LENGTH_SHORT).show();
         PdfDocument pdfDocument = new PdfDocument();
 
-        // variable for paint
+        Paint paint = new Paint();
         Paint title = new Paint();
 
-        // we are adding page info to our PDF file, in which we will be passing our pageWidth, pageHeight and number of pages
-        // later, we are calling it to create our PDF.
-        PdfDocument.PageInfo myPageInfo = new PdfDocument.PageInfo.Builder(792, 1120, 1).create();
-
-        // below line is used for setting start page for our PDF file.
+        PdfDocument.PageInfo myPageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
         PdfDocument.Page myPage = pdfDocument.startPage(myPageInfo);
 
-        // creating a variable for canvas from our page of PDF.
         Canvas canvas = myPage.getCanvas();
+        canvas.drawBitmap(scaledbmp, 56, 40, paint);
 
-        // below line is used for adding typeface for our text which we will be adding in our PDF file.
         title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        // below line is used for setting text size which we will be displaying in our PDF file.
         title.setTextSize(15);
-        // below line is sued for setting color of our text inside our PDF file.
         title.setColor(ContextCompat.getColor(this, R.color.purple_200));
 
-        // below line is used to draw text in our PDF file
-        canvas.drawText("A smart device to be peaceful", 300, 320, title);
-        canvas.drawText("Ceylon Electricity board", 300, 300, title);
+        canvas.drawText("Smart IoT systems empowering you.", 209, 100, title);
+        canvas.drawText("ABC electricity usage meter", 209, 80, title);
 
-        // after adding all attributes to our PDF file we will be finishing our page.
+        title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+        title.setColor(ContextCompat.getColor(this, R.color.purple_200));
+        title.setTextSize(15);
+
+        title.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("This is sample document which we have created", 396, 560, title);
+
         pdfDocument.finishPage(myPage);
 
-        // below line is used to set the name of our PDF file and its path.
-        File file = new File(Environment.getExternalStorageDirectory(), "electricBill.pdf");
+        //write the above to PDF file and save in phone memory
+        File file = new File(Environment.getExternalStorageDirectory(), "GeneratedBill.pdf");
 
         try {
-            // after creating a file name, we will write our PDF file to that location.
             pdfDocument.writeTo(new FileOutputStream(file));
-            // prints toast message on completion of PDF generation.
-            Toast.makeText(MainActivity.this, "PDF file generated successfully.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "PDF file generated successfully", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            // error handling
-            Log.e("main", "error " + e);
             e.printStackTrace();
-            // toast message printing the error
-            Toast.makeText(this, "Something wrong: " + e, Toast.LENGTH_SHORT).show();
         }
-        // closes PDF file
+
         pdfDocument.close();
     }
 
@@ -258,12 +258,13 @@ public class MainActivity extends AppCompatActivity {
     //function for checking permissions
     private boolean checkPermission() {
         int permission1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-        return permission1 == PackageManager.PERMISSION_GRANTED;
+        int permission2 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        return permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED;
     }
 
     //function to request permission if it was not provided
     private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
     }
 
     @Override
@@ -272,8 +273,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0) {
                 boolean writeStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean readStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
 
-                if (writeStorage) {
+                if (writeStorage && readStorage) {
                     Toast.makeText(this, "Permission Granted..", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "Permission Denied.", Toast.LENGTH_SHORT).show();
