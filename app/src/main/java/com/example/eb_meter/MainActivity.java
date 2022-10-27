@@ -3,7 +3,15 @@ package com.example.eb_meter;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,12 +25,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     private final int[] totalUnit = new int[7];
     private final float[] totalCharge = new float[7];
+
+    Bitmap bmp, scaledbmp;
 
     // constant code for runtime permissions
     private static final int PERMISSION_REQUEST_CODE = 200;
@@ -66,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
         //function call to generate PDF document
         Button createPdfBtn = findViewById(R.id.createPdfBtn);
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.pdf_header);
+        scaledbmp = Bitmap.createScaledBitmap(bmp, 1050, 369, false);
         createPdfBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,8 +112,53 @@ public class MainActivity extends AppCompatActivity {
 
     //function to generate PDF
     private void createPdfFunc() {
-        //creating new document
+        // creating an object variable for our PDF document.
+        PdfDocument pdfDocument = new PdfDocument();
 
+        // variable for paint
+        Paint title = new Paint();
+
+        // we are adding page info to our PDF file, in which we will be passing our pageWidth, pageHeight and number of pages
+        // later, we are calling it to create our PDF.
+        PdfDocument.PageInfo myPageInfo = new PdfDocument.PageInfo.Builder(792, 1120, 1).create();
+
+        // below line is used for setting start page for our PDF file.
+        PdfDocument.Page myPage = pdfDocument.startPage(myPageInfo);
+
+        // creating a variable for canvas from our page of PDF.
+        Canvas canvas = myPage.getCanvas();
+
+        // below line is used for adding typeface for our text which we will be adding in our PDF file.
+        title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        // below line is used for setting text size which we will be displaying in our PDF file.
+        title.setTextSize(15);
+        // below line is sued for setting color of our text inside our PDF file.
+        title.setColor(ContextCompat.getColor(this, R.color.purple_200));
+
+        // below line is used to draw text in our PDF file
+        canvas.drawText("A smart device to be peaceful", 300, 320, title);
+        canvas.drawText("Ceylon Electricity board", 300, 300, title);
+
+        // after adding all attributes to our PDF file we will be finishing our page.
+        pdfDocument.finishPage(myPage);
+
+        // below line is used to set the name of our PDF file and its path.
+        File file = new File(Environment.getExternalStorageDirectory(), "electricBill.pdf");
+
+        try {
+            // after creating a file name, we will write our PDF file to that location.
+            pdfDocument.writeTo(new FileOutputStream(file));
+            // prints toast message on completion of PDF generation.
+            Toast.makeText(MainActivity.this, "PDF file generated successfully.", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            // error handling
+            Log.e("main", "error " + e);
+            e.printStackTrace();
+            // toast message printing the error
+            Toast.makeText(this, "Something wrong: " + e, Toast.LENGTH_SHORT).show();
+        }
+        // closes PDF file
+        pdfDocument.close();
     }
 
     //function to generate random values
@@ -212,9 +272,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0) {
                 boolean writeStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                boolean readStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
 
-                if (writeStorage && readStorage) {
+                if (writeStorage) {
                     Toast.makeText(this, "Permission Granted..", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "Permission Denied.", Toast.LENGTH_SHORT).show();
