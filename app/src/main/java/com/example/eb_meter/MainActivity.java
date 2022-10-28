@@ -32,6 +32,10 @@ public class MainActivity extends AppCompatActivity implements PdfUtility.OnDocu
     private final float[] totalCharge = new float[7];
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    //memory to store total units and cost
+    int totUnits = 0;
+    float totCharges = (float) 0.00;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements PdfUtility.OnDocu
                 String path = Environment.getExternalStorageDirectory().toString() + "/electricBill.pdf";
 
                 try {
-                    PdfUtility.createPdf(view.getContext(), MainActivity.this, getSampleData(), path, true);
+                    PdfUtility.createPdf(view.getContext(), MainActivity.this, getMeterData(), path, true);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e(TAG,"Error Creating Pdf");
@@ -91,17 +95,19 @@ public class MainActivity extends AppCompatActivity implements PdfUtility.OnDocu
 
     @Override
     public void onPdfDocumentClose(File file) {
-        Toast.makeText(this, "Sample PDF created", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "PDF created", Toast.LENGTH_SHORT).show();
     }
 
-    private List<String[]> getSampleData() {
-        int count = 20;
+    private List<String[]> getMeterData() {
+        int count = 7;
+        String[] rooms = {"Living room", "Dining room", "Kitchen", "Bedroom 1", "Bedroom 2", "Bathroom 1", "Bathroom 2"};
 
         List<String[]> temp = new ArrayList<>();
         for (int i = 0; i < count; i++)
         {
-            temp.add(new String[] {"C1-R"+ (i+1),"C2-R"+ (i+1)});
+            temp.add(new String[] {rooms[i], String.valueOf(totalUnit[i]), getString(R.string.chargeFormat, totalCharge[i])});
         }
+        temp.add(new String[] {"Total", String.valueOf(totUnits), getString(R.string.chargeFormat, totCharges)});
         return  temp;
     }
 
@@ -201,9 +207,6 @@ public class MainActivity extends AppCompatActivity implements PdfUtility.OnDocu
 
     //function to calculate total charges and units
     private void calcTotal() {
-        int totUnits = 0;
-        float totCharges = (float) 0.00;
-
         //totalling units and charges for display
         for(int i=0; i<totalUnit.length; i++) {
             totUnits += totalUnit[i];
