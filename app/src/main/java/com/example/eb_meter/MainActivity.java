@@ -36,6 +36,11 @@ public class MainActivity extends AppCompatActivity implements PdfUtility.OnDocu
     int totUnits = 0;
     float totCharges = (float) 0.00;
 
+    /*
+    below code is commented out as it runs in an unexpected error
+    TextView datacell = findViewById(R.id.lrUnits);
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +56,13 @@ public class MainActivity extends AppCompatActivity implements PdfUtility.OnDocu
         //to get the a/c number of the meter from the previous activity
         accountTxt.setText(getString(R.string.cebACNumber, getIntent().getStringExtra("accountNumber")));
 
+        /* below function is commented out
+        as it runs into an unexpected error
+        while trying to receive data from
+        ESP 8266 wifi module
+         */
+        //getBodyText();
+
         setUnits();
         setCharge();
         calcTotal();
@@ -60,6 +72,15 @@ public class MainActivity extends AppCompatActivity implements PdfUtility.OnDocu
         refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //setting variables to 0 again as user wanted to refresh
+                for(int i=0; i<7; ++i) {
+                    totalUnit[i] = 0;
+                    totalCharge [i] = (float) 0.0;
+                }
+                totUnits = 0;
+                totCharges = (float) 0.00;
+
+                //getBodyText();
                 setUnits();
                 setCharge();
                 calcTotal();
@@ -122,20 +143,50 @@ public class MainActivity extends AppCompatActivity implements PdfUtility.OnDocu
     //function to return a string if settings is selected
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settingMenu:
-                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.logout) {
+            Intent backToLoginPage = new Intent(this, LoginActivity.class);
+            Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
+            startActivity(backToLoginPage);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     //function to generate random values
     private int generateRandomValues() {
         Random random = new Random();
-        return random.nextInt(110 - 15) + 15;
+        return random.nextInt(100 - 10) + 10;
     }
+
+    /*
+    private void getBodyText() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final StringBuilder builder = new StringBuilder();
+
+                try {
+                    String url="http://192.168.1.6";//ESP 8266 wifi module IP address in local network
+                    Document doc = Jsoup.connect(url).get();
+
+                    Element body = doc.body();
+                    builder.append(body.text());
+
+                } catch (Exception e) {
+                    builder.append("Error : ").append(e.getMessage()).append("\n");
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        datacell.setText(builder.toString());
+                    }
+                });
+            }
+        }).start();
+    }
+     */
+
 
     //function to set units
     private void setUnits() {

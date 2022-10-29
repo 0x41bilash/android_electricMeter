@@ -128,7 +128,6 @@ public class PdfUtility {
         {
             /*LEFT TOP LOGO*/
             Drawable d= ContextCompat.getDrawable(mContext, R.drawable.pdf_logo);
-            assert d != null;
             Bitmap bmp=((BitmapDrawable) d).getBitmap();
             ByteArrayOutputStream stream=new ByteArrayOutputStream();
             bmp.compress(Bitmap.CompressFormat.PNG,100,stream);
@@ -154,24 +153,49 @@ public class PdfUtility {
             cell.setPadding(8f);
             cell.setUseAscender(true);
 
-            Paragraph temp1 = new Paragraph("CEB Corporation" ,FONT_TITLE);
-            temp1.setAlignment(Element.ALIGN_CENTER);
-            cell.addElement(temp1);
+            Paragraph temp = new Paragraph("CEB Electricity Bill" ,FONT_TITLE);
+            temp.setAlignment(Element.ALIGN_CENTER);
+            cell.addElement(temp);
 
-            Paragraph temp2 = new Paragraph("Automatically generated electricity e-bill" ,FONT_SUBTITLE);
-            temp2.setAlignment(Element.ALIGN_CENTER);
-            cell.addElement(temp2);
-
-            Paragraph temp3 = new Paragraph("Account number: 0123456789\nCustomer name: Bevan\nBilling Period: 01/10/2022 - 31/10/2022\nPayment due date: 24/11/2022" ,new Font(Font.FontFamily.TIMES_ROMAN, 11.0f, Font.NORMAL, BaseColor.BLACK));
-            temp3.setAlignment(Element.ALIGN_CENTER);
-            cell.addElement(temp3);
+            temp = new Paragraph("Customer name: Bevan\nAccount number: 0123456789\nBilling period: 01/10/2022 - 31/10/2022\nPayment Due Date: 14/11/2022" ,FONT_SUBTITLE);
+            temp.setAlignment(Element.ALIGN_CENTER);
+            cell.addElement(temp);
 
             table.addCell(cell);
         }
+        /* RIGHT TOP LOGO*/
+        {
+            PdfPTable logoTable=new PdfPTable(1);
+            logoTable.setWidthPercentage(100);
+            logoTable.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+            logoTable.setHorizontalAlignment(Element.ALIGN_CENTER);
+            logoTable.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
 
-        Paragraph paragraph=new Paragraph("This electric form of the bill has the same legal recognition, effect, validity or enforceability as the original form of the bill, in terms of the Electronic Transactions Act No. 19 of 2006.",new Font(Font.FontFamily.TIMES_ROMAN, 11f, Font.NORMAL, BaseColor.BLACK));
-        paragraph.add(table);
-        document.add(paragraph);
+            Drawable drawable=ContextCompat.getDrawable(mContext, R.drawable.pdf_logo2);
+            Bitmap bmp =((BitmapDrawable)drawable).getBitmap();
+
+            ByteArrayOutputStream stream=new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.PNG,100,stream);
+            Image logo=Image.getInstance(stream.toByteArray());
+            logo.setWidthPercentage(80);
+            logo.scaleToFit(38,38);
+
+            PdfPCell logoCell = new PdfPCell(logo);
+            logoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            logoCell.setBorder(PdfPCell.NO_BORDER);
+
+            logoTable.addCell(logoCell);
+
+            cell = new PdfPCell(logoTable);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setUseAscender(true);
+            cell.setBorder(PdfPCell.NO_BORDER);
+            cell.setPadding(2f);
+            table.addCell(cell);
+        }
+
         document.add(table);
     }
 
