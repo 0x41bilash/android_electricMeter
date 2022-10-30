@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements PdfUtility.OnDocu
                 final StringBuilder builder = new StringBuilder();
 
                 try {
-                    String url="http://192.168.1.6";//ESP 8266 wifi module IP address in local network
+                    String url="http://192.168.1.21";//ESP 8266 wifi module IP address in local network
                     Document doc = Jsoup.connect(url).get();
 
                     Element body = doc.body();
